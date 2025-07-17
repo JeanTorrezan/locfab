@@ -1,0 +1,2 @@
+# locfab
+Localidades contratadas FAB
