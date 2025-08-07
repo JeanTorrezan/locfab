@@ -274,7 +274,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>✈️ ICAO Brasil - versão corrigida do Claude (arredondamento)</h1>
+            <h1>✈️ ICAO Brasil - CLAUDE V19</h1>
             <p>Localidades Aeroportuárias - Todo o Brasil</p>
         </div>
 
@@ -395,10 +395,26 @@
                 var linha = linhas[i].trim();
                 if (!linha) continue;
                 
-                // Dividir por vírgulas, mas considerar aspas
-                var colunas = linha.split(',').map(function(col) {
-                    return col.replace(/"/g, '').trim();
-                });
+                // Dividir por vírgulas, mas tratar aspas corretamente
+                var colunas = [];
+                var dentroAspas = false;
+                var colunaAtual = '';
+                
+                for (var j = 0; j < linha.length; j++) {
+                    var char = linha[j];
+                    if (char === '"') {
+                        dentroAspas = !dentroAspas;
+                    } else if (char === ',' && !dentroAspas) {
+                        colunas.push(colunaAtual.trim().replace(/"/g, ''));
+                        colunaAtual = '';
+                    } else {
+                        colunaAtual += char;
+                    }
+                }
+                // Adicionar última coluna
+                if (colunaAtual) {
+                    colunas.push(colunaAtual.trim().replace(/"/g, ''));
+                }
                 
                 if (colunas.length >= 12 && colunas[1] && colunas[5]) {
                     // Preço pode estar em colunas 10 e 11 devido à separação pela vírgula
