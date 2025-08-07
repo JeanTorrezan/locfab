@@ -423,10 +423,10 @@
             var mapDados = {};
             novosDados.forEach(function(item) {
                 var chave = item.icao + '_' + item.combustivel;
-                // Garantir que o preço mantenha 4 casas decimais
-                var precoFormatado = parseFloat(item.preco).toFixed(4).replace('.', ',');
+                // Pegar o preço exatamente como está na planilha, apenas trocar ponto por vírgula
+                var precoOriginal = item.preco.toString().replace('.', ',');
                 mapDados[chave] = {
-                    preco: precoFormatado,
+                    preco: precoOriginal,
                     vigencia: item.vigencia
                 };
             });
