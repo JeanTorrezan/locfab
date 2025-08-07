@@ -275,7 +275,7 @@
     <div class="container">
         <div class="header">
             <h1>✈️ ICAO Brasil</h1>
-            <p>Localidades Aeroportuárias - Todo o Brasil</p>
+            <p>Localidades Aeroportuárias - Todo o Brasil (versao GPT)</p>
         </div>
 
         <div class="search-container">
@@ -386,37 +386,39 @@
             botao.textContent = '📊 Atualizar Preços';
         }
 
+        
         function processarCSV(csvText) {
             var linhas = csvText.split('\n');
             var dados = [];
-            
-            // Processar cada linha do CSV (pular cabeçalho)
+
             for (var i = 1; i < linhas.length; i++) {
                 var linha = linhas[i].trim();
                 if (!linha) continue;
-                
-                // Dividir por vírgulas, mas considerar aspas
+
                 var colunas = linha.split(',').map(function(col) {
                     return col.replace(/"/g, '').trim();
                 });
-                
-                if (colunas.length >= 11 && colunas[1] && colunas[10]) {
-                    // Estrutura: CHAVE(0), ICAO(1), LOCALIDADE(2), UF(3), REGIÃO(4), 
-                    //           COMBUSTÍVEL(5), OBS(6), CONTRATO(7), VIGÊNCIA(8), 
-                    //           EMPRESA(9), PREÇO(10), STATUS(11)
+
+                if (colunas.length >= 11 && colunas[1] && colunas[5]) {
+                    var precoBruto = colunas[10];
+                    if (colunas[11] && /^\d+$/.test(colunas[11])) {
+                        precoBruto += ',' + colunas[11];
+                    }
+
                     dados.push({
                         icao: colunas[1],
                         combustivel: colunas[5],
-                        preco: colunas[10],
+                        preco: precoBruto,
                         vigencia: colunas[8] || '',
-                        chave: colunas[1] + '_' + colunas[5] // Para identificação única
+                        chave: colunas[1] + '_' + colunas[5]
                     });
                 }
             }
-            
+
             console.log('Dados processados da planilha:', dados.length + ' itens');
             return dados;
         }
+    
 
         function atualizarApenasPrecos(novosDados) {
             // Criar mapa de preços e vigência por ICAO + Combustível
