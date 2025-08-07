@@ -274,8 +274,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>✈️ ICAO Brasil</h1>
-            <p>Localidades Aeroportuárias - Todo o Brasil (versao GPT)</p>
+            <h1>✈️ ICAO Brasil - versão corrigida do Claude (arredondamento)</h1>
+            <p>Localidades Aeroportuárias - Todo o Brasil</p>
         </div>
 
         <div class="search-container">
@@ -386,49 +386,54 @@
             botao.textContent = '📊 Atualizar Preços';
         }
 
-        
         function processarCSV(csvText) {
             var linhas = csvText.split('\n');
             var dados = [];
-
+            
+            // Processar cada linha do CSV (pular cabeçalho)
             for (var i = 1; i < linhas.length; i++) {
                 var linha = linhas[i].trim();
                 if (!linha) continue;
-
+                
+                // Dividir por vírgulas, mas considerar aspas
                 var colunas = linha.split(',').map(function(col) {
                     return col.replace(/"/g, '').trim();
                 });
-
-                if (colunas.length >= 11 && colunas[1] && colunas[5]) {
+                
+                if (colunas.length >= 12 && colunas[1] && colunas[5]) {
+                    // Preço pode estar em colunas 10 e 11 devido à separação pela vírgula
                     var precoBruto = colunas[10];
+                    
+                    // Verifica se há separação incorreta da vírgula decimal
                     if (colunas[11] && /^\d+$/.test(colunas[11])) {
-                        precoBruto += ',' + colunas[11];
+                        precoBruto += ',' + colunas[11]; // junta "5" + "," + "2368"
                     }
-
+                    
+                    // Estrutura: CHAVE(0), ICAO(1), LOCALIDADE(2), UF(3), REGIÃO(4), 
+                    //           COMBUSTÍVEL(5), OBS(6), CONTRATO(7), VIGÊNCIA(8), 
+                    //           EMPRESA(9), PREÇO(10,11), STATUS(12)
                     dados.push({
                         icao: colunas[1],
                         combustivel: colunas[5],
                         preco: precoBruto,
                         vigencia: colunas[8] || '',
-                        chave: colunas[1] + '_' + colunas[5]
+                        chave: colunas[1] + '_' + colunas[5] // Para identificação única
                     });
                 }
             }
-
+            
             console.log('Dados processados da planilha:', dados.length + ' itens');
             return dados;
         }
-    
 
         function atualizarApenasPrecos(novosDados) {
             // Criar mapa de preços e vigência por ICAO + Combustível
             var mapDados = {};
             novosDados.forEach(function(item) {
                 var chave = item.icao + '_' + item.combustivel;
-                // Pegar o preço exatamente como está na planilha, apenas trocar ponto por vírgula
-                var precoOriginal = item.preco.toString().replace('.', ',');
+                // Usar o preço exatamente como veio da planilha (já com vírgula)
                 mapDados[chave] = {
-                    preco: precoOriginal,
+                    preco: item.preco,
                     vigencia: item.vigencia
                 };
             });
