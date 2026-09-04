@@ -598,6 +598,10 @@
                 html += '<div class="info-item"><div class="info-label">Empresa</div><div class="info-value">' + item.empresa + '</div></div>';
                 html += '<div class="info-item"><div class="info-label">Vigência até</div><div class="info-value">' + item.vigencia + '</div></div>';
                 
+                if (item.contrato && item.contrato.trim() !== '') {
+                    html += '<div class="info-item"><div class="info-label">Contrato</div><div class="info-value">' + item.contrato + '</div></div>';
+                }
+                
                 if (item.obs && item.obs.trim() !== '') {
                     html += '<div class="observacoes"><strong>Observações:</strong> ' + item.obs + '</div>';
                 }
